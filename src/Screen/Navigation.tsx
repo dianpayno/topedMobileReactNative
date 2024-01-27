@@ -1,4 +1,5 @@
 import React from "react";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -6,7 +7,7 @@ import {
   verticalScale,
   horizontalScale,
 } from "../components/Themes/Metrixs";
-import { StyleSheet, Text, View, TextInput, Image } from "react-native";
+import { StyleSheet, Text, View, TextInput, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
@@ -71,8 +72,8 @@ const Navigation = () => {
     textinput: {
       width: horizontalScale(180),
       height: verticalScale(30),
-      padding: moderateScale(7),
-      fontSize: moderateScale(17),
+      padding: Platform.OS === "ios" ? moderateScale(7) : moderateScale(5),
+      fontSize: Platform.OS === "ios" ? moderateScale(17) : moderateScale(15),
     },
     containerMenu: {
       flexDirection: "row",
