@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, Platform } from "react-native";
 import React from "react";
 import { moderateScale, verticalScale } from "../Themes/Metrixs";
 
+
 const TopUpSection = () => {
-  const saldo = 370800;
+   const saldo = 370800;
+  
   return (
     <View style={styles.container}>
       <View style={styles.containerWraper}>
@@ -13,13 +15,15 @@ const TopUpSection = () => {
         />
         <View>
           <Text style={styles.text}>
-            {saldo.toLocaleString("id-ID", {
-              style: "currency",
-              currency: "IDR",
-              maximumFractionDigits: 0,
-            })}
+            {
+              Platform.OS === "ios" ?saldo?.toLocaleString("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              })  : "Rp370.670"
+            }
           </Text>
-          <Text style={{color:"gray"}}>3.456 Coins</Text>
+          <Text style={{color:"gray", fontSize:13}}>3.456 Coins</Text>
         </View>
       </View>
 
@@ -32,7 +36,7 @@ const TopUpSection = () => {
           <Text style={styles.text}>
             Coba 1 Bulan
           </Text>
-          <Text style={{color:"#00b200", fontWeight:"bold"}}>Langganan, Yuk!</Text>
+          <Text style={{color:"#00b200", fontWeight:"bold", fontSize:13}}>Langganan, Yuk!</Text>
         </View>
       </View>
 
@@ -45,7 +49,7 @@ const TopUpSection = () => {
           <Text style={styles.text}>
            Silver
           </Text>
-          <Text style={{color:"gray"}}>9 Kupon Baru</Text>
+          <Text style={{color:"gray", fontSize:13}}>9 Kupon Baru</Text>
         </View>
       </View>
      
@@ -59,7 +63,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: verticalScale(50),
-    // backgroundColor: "red",
     paddingVertical: moderateScale(8),
     flexDirection: "row",
     justifyContent: "space-between",
@@ -77,7 +80,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:moderateScale(7),
     flexDirection: "row",
     alignItems: "center",
-    gap: moderateScale(5),
+    gap: Platform.OS === "ios" ? moderateScale(5): moderateScale(1),
   },
   image: {
     width: moderateScale(23),

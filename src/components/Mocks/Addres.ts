@@ -19,3 +19,4 @@ export const Addres = [
     },
 ]
 
+export const saldoGopay = 376000

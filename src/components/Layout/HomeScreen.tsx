@@ -5,6 +5,8 @@ import {
   Platform,
   TouchableOpacity,
   FlatList,
+  ScrollView,
+  Dimensions,
 } from "react-native";
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -23,29 +25,86 @@ import TopUpSection from "../TopUpSection/Index";
 import CarouselPromo from "../Carousel/CarouselPromo";
 import { Addres } from "../Mocks/Addres";
 import { ImagesSlide } from "../Mocks/CarouselImage";
+import DotCarousel from "../Carousel/DotCarousel";
+import KategoryMenu from "../KategoryMenu/Index";
+import PromoOne from "../ProductSection/PromoOne";
+import BottomNavigation from "../BottomNavigation/BottomNavigation";
 
 const HomeScreenlayout = () => {
   const [detailAndress, setDetailAndress] = useState(false);
+  const [active, setActive] = useState(0);
+  const screenWidth = Dimensions.get("window").width;
+  const handleScroll = (event: any) => {
+    const currentPosition = event.nativeEvent.contentOffset.x;
+    const index = Math.ceil(currentPosition / screenWidth);
+    if (index <= ImagesSlide.length - 1) {
+      return setActive(index);
+    }
+  };
   const alamat =
     "Jl. Green Andara Residences Blok B3 No. 19, Pangkalan Jati Baru, Cinere, Depok, Jawa Barat , Indonesia";
   return (
-    <View style={styles.container}>
-      <StatusBar style="dark" />
-      <View style={styles.containeradress}>
-        <Ionicons name="location-sharp" size={15} color="#00b200" />
-        <View style={{ flexDirection: "row", gap: horizontalScale(5) }}>
-          <Text style={{ color: "grey" }}>Dikirim ke</Text>
-          <Text
-          >
-            {Platform.OS === "ios"
-              ? alamat.substring(0, 45) + "..."
-              : alamat.substring(0, 36) + "..."}
-          </Text>
-          <TouchableOpacity onPress={() => setDetailAndress(true)}>
-            <MaterialIcons name="keyboard-arrow-down" size={15} color="black" />
-          </TouchableOpacity>
+    <>
+      <ScrollView style={styles.main}>
+        <View style={styles.container}>
+          <StatusBar style="dark" />
+          <View style={styles.containeradress}>
+            <Ionicons name="location-sharp" size={15} color="#00b200" />
+            <View style={{ flexDirection: "row", gap: horizontalScale(5) }}>
+              <Text style={{ color: "grey" }}>Dikirim ke</Text>
+              <Text>
+                {Platform.OS === "ios"
+                  ? alamat.substring(0, 45) + "..."
+                  : alamat.substring(0, 36) + "..."}
+              </Text>
+              <TouchableOpacity onPress={() => setDetailAndress(true)}>
+                <MaterialIcons
+                  name="keyboard-arrow-down"
+                  size={15}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View>
+            <TopUpSection />
+          </View>
         </View>
-      </View>
+        <View
+          style={{
+            position: "relative",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FlatList
+            data={ImagesSlide}
+            keyExtractor={(item) => item.id.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            onScroll={handleScroll}
+            renderItem={({ item }) => <CarouselPromo data={item} />}
+          />
+          <DotCarousel activeIndex={active} />
+        </View>
+
+        <View style={styles.categoryWrap}>
+          <KategoryMenu />
+        </View>
+        <View>
+          <PromoOne />
+        </View>
+        <View>
+          <PromoOne />
+        </View>
+        <View>
+          <PromoOne />
+        </View>
+
+        {/* Product Section */}
+      </ScrollView>
+      {/* addresspopUp */}
       {detailAndress && (
         <View style={styles.modalContainer}>
           <View style={styles.titleContainer}>
@@ -67,10 +126,8 @@ const HomeScreenlayout = () => {
               data={Addres}
               renderItem={({ item, index }) => (
                 <>
-                <CardAddres data={item} index={index} />
-                {
-                  index === Addres.length -1 ? <CheckAdress /> : null
-                }
+                  <CardAddres data={item} index={index} />
+                  {index === Addres.length - 1 ? <CheckAdress /> : null}
                 </>
               )}
               keyExtractor={(item) => item.id.toString()}
@@ -102,36 +159,21 @@ const HomeScreenlayout = () => {
           </View>
         </View>
       )}
-      <View>
-        <TopUpSection/>
-      </View>
-      <View style={{ marginTop: verticalScale(12),
-    // position: "absolute",
-    // top:verticalScale(60),
-    // left:0,
-    // right:0,
-    }}>
-       
-        <FlatList
-        data={ImagesSlide}
-        keyExtractor={(item) => item.id.toString()}
-    
-        renderItem={({ item }) => (
-            <CarouselPromo data={item}/>
-        )}
-        />
-      </View>
-    </View>
+      <BottomNavigation/>
+     
+    </>
   );
 };
 
 export default HomeScreenlayout;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  main: {
     backgroundColor: "white",
-    paddingHorizontal: horizontalScale(20),
+    flex: 1,
+  },
+  container: {
+    paddingHorizontal: horizontalScale(15),
     paddingVertical: moderateScale(5),
   },
   containeradress: {
@@ -140,14 +182,14 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     position: "absolute",
-
+    top: verticalScale(300),
     bottom: 0,
     left: 0,
     right: 0,
-    height: verticalScale(400),
     borderTopLeftRadius: moderateScale(20),
     borderTopRightRadius: moderateScale(20),
-    backgroundColor: "#F8F7F3",
+    backgroundColor: "white",
+    zIndex: 10,
     paddingVertical: moderateScale(10),
   },
   title: {
@@ -176,7 +218,6 @@ const styles = StyleSheet.create({
   textWrap: {
     flexDirection: "row",
     gap: horizontalScale(5),
-
     alignItems: "center",
   },
   containertextWrap: {
@@ -185,4 +226,10 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(20),
     justifyContent: "space-between",
   },
+  categoryWrap: {
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: horizontalScale(5),
+    width: "100%",
+  },
+ 
 });
